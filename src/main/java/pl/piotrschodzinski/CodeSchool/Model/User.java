@@ -25,18 +25,22 @@ public class User {
         setPassword(password);
     }
 
+    private static User loadSingleUser(ResultSet resultSet) throws SQLException {
+        User loadedUser = new User();
+        loadedUser.id = resultSet.getLong("id");
+        loadedUser.username = resultSet.getString("username");
+        loadedUser.userGroupId = resultSet.getInt("user_group_id");
+        loadedUser.password = resultSet.getString("password");
+        loadedUser.email = resultSet.getString("email");
+        return loadedUser;
+    }
+
     public static User loadById(Connection connection, long id) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("SELECT* FROM users WHERE id=?;");
         statement.setLong(1, id);
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
-            User loadedUser = new User();
-            loadedUser.id = resultSet.getLong("id");
-            loadedUser.username = resultSet.getString("username");
-            loadedUser.userGroupId = resultSet.getInt("user_group_id");
-            loadedUser.password = resultSet.getString("password");
-            loadedUser.email = resultSet.getString("email");
-            return loadedUser;
+            return loadSingleUser(resultSet);
         }
         return null;
     }
@@ -46,40 +50,13 @@ public class User {
         PreparedStatement statement = connection.prepareStatement("SELECT* FROM users;");
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
-            User loadedUser = new User();
-            loadedUser.id = resultSet.getLong("id");
-            loadedUser.username = resultSet.getString("username");
-            loadedUser.userGroupId = resultSet.getInt("user_group_id");
-            loadedUser.password = resultSet.getString("password");
-            loadedUser.email = resultSet.getString("email");
-            loadedUsers.add(loadedUser);
+            loadedUsers.add(loadSingleUser(resultSet));
         }
         return loadedUsers;
     }
 
-    public static void printUsers(ArrayList<User> users) {
-        if (users == null) {
-            System.out.println("List is empty.");
-            return;
-        }
-        for (User user : users) {
-            System.out.println(user);
-        }
-    }
-
     private void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    public void delete(Connection connection) throws SQLException {
-        if (this.id != 0) {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id=?");
-            statement.setLong(1, this.id);
-            statement.executeUpdate();
-            this.id = 0;
-        } else {
-            System.out.println("User doesn't exist.");
-        }
     }
 
     public void saveToDB(Connection connection) throws SQLException {
@@ -102,6 +79,27 @@ public class User {
             statement.setInt(4, this.userGroupId);
             statement.setLong(5, this.id);
             statement.executeUpdate();
+        }
+    }
+
+    public void delete(Connection connection) throws SQLException {
+        if (this.id != 0) {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id=?");
+            statement.setLong(1, this.id);
+            statement.executeUpdate();
+            this.id = 0;
+        } else {
+            System.out.println("User doesn't exist.");
+        }
+    }
+
+    public static void printUsers(ArrayList<User> users) {
+        if (users == null) {
+            System.out.println("List is empty.");
+            return;
+        }
+        for (User user : users) {
+            System.out.println(user);
         }
     }
 
