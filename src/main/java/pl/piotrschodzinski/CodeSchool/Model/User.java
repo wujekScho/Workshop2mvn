@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class User {
     private long id;
@@ -55,6 +56,34 @@ public class User {
         return loadedUsers;
     }
 
+    public static boolean checkMail(Connection connection, String email) throws SQLException {
+        for (User user : loadAll(connection)) {
+            if (user.email.equalsIgnoreCase(email)) {
+                return false;
+            }
+        }
+        return Pattern.matches("^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$", email);
+    }
+
+    public static boolean checkId(Connection connection, long id) throws SQLException {
+        for (User user : loadAll(connection)) {
+            if (user.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ArrayList<Integer> loadUserIds(Connection connection) throws SQLException {
+        ArrayList<Integer> loadedIds = new ArrayList<>();
+        PreparedStatement statement = connection.prepareStatement("SELECT id FROM users");
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            loadedIds.add(resultSet.getInt("id"));
+        }
+        return loadedIds;
+    }
+
     private void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -98,17 +127,19 @@ public class User {
             System.out.println("List is empty.");
             return;
         }
+        System.out.println("List of users: ");
+        System.out.println("+--------+---------------+-------------------------+----------+");
+        System.out.println(String.format("|%-8s|%-15s|%-25s|%-10s|", "Id", "Username", "Email", "User Group"));
+        System.out.println("+--------+---------------+-------------------------+----------+");
         for (User user : users) {
             System.out.println(user);
         }
+        System.out.println("+--------+---------------+-------------------------+----------+");
+
     }
 
     @Override
     public String toString() {
-        return "id:" + id +
-                "\tusername:" + username +
-                "\temail:" + email +
-                "\tpassword:" + password +
-                "\tuserGroupId:" + userGroupId;
+        return String.format("|%-8d|%-15s|%-25s|%-10d|", id, username, email, userGroupId);
     }
 }

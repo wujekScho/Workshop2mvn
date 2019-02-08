@@ -44,6 +44,15 @@ public class UserGroup {
         return loadedGroups;
     }
 
+    public static boolean checkGroupId(Connection connection, int id) throws SQLException {
+        for (UserGroup usergroup : loadAll(connection)) {
+            if (usergroup.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void printUserGroups(ArrayList<UserGroup> userGroups) {
         if (userGroups == null) {
             System.out.println("List is empty.");
