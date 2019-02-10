@@ -17,6 +17,46 @@ public class UserGroup {
         this.name = name;
     }
 
+    public static UserGroup editUserGroup(Connection connection, int id, String name) throws SQLException {
+        UserGroup userGroupToEdit = loadById(connection, id);
+        userGroupToEdit.name = name;
+        return userGroupToEdit;
+    }
+
+    public static boolean checkGroupId(Connection connection, int id) throws SQLException {
+        for (UserGroup usergroup : loadAll(connection)) {
+            if (usergroup.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ArrayList<UserGroup> loadAll(Connection connection) throws SQLException {
+        ArrayList<UserGroup> loadedGroups = new ArrayList<>();
+        PreparedStatement statement = connection.prepareStatement("SELECT* FROM user_group ORDER BY id ASC;");
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            loadedGroups.add(loadSingleGroup(resultSet));
+        }
+        return loadedGroups;
+    }
+
+    public static void printUserGroups(ArrayList<UserGroup> userGroups) {
+        if (userGroups == null) {
+            System.out.println("List is empty.");
+            return;
+        }
+        System.out.println("List of user groups: ");
+        System.out.println("+--------+---------------+");
+        System.out.println(String.format("|%-8s|%-15s|", "Id", "Name"));
+        System.out.println("+--------+---------------+");
+        for (UserGroup userGroup : userGroups) {
+            System.out.println(userGroup);
+        }
+        System.out.println("+--------+---------------+");
+    }
+
     private static UserGroup loadSingleGroup(ResultSet resultSet) throws SQLException {
         UserGroup loadedGroup = new UserGroup();
         loadedGroup.id = resultSet.getInt("id");
@@ -34,38 +74,10 @@ public class UserGroup {
         return null;
     }
 
-    public static ArrayList<UserGroup> loadAll(Connection connection) throws SQLException {
-        ArrayList<UserGroup> loadedGroups = new ArrayList<>();
-        PreparedStatement statement = connection.prepareStatement("SELECT* FROM user_group;");
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            loadedGroups.add(loadSingleGroup(resultSet));
-        }
-        return loadedGroups;
-    }
-
-    public static boolean checkGroupId(Connection connection, int id) throws SQLException {
-        for (UserGroup usergroup : loadAll(connection)) {
-            if (usergroup.id == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void printUserGroups(ArrayList<UserGroup> userGroups) {
-        if (userGroups == null) {
-            System.out.println("List is empty.");
-            return;
-        }
-        for (UserGroup userGroup : userGroups) {
-            System.out.println(userGroup);
-        }
-    }
-
     public void saveToDB(Connection connection) throws SQLException {
         if (this.id == 0) {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO user_group (name) VALUES (?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO user_group (name) VALUES (?)",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, this.name);
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -93,7 +105,6 @@ public class UserGroup {
 
     @Override
     public String toString() {
-        return "id:" + id +
-                "\tname:" + name;
+        return String.format("|%-8d|%-15s|", id, (name.length() > 15) ? name.substring(0, 12) + "..." : name);
     }
 }

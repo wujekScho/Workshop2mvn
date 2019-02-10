@@ -19,6 +19,47 @@ public class Exercise {
         this.description = description;
     }
 
+    public static Exercise editExercise(Connection connection, int id, String title, String description) throws SQLException {
+        Exercise exerciseToEdit = loadById(connection, id);
+        exerciseToEdit.title = title;
+        exerciseToEdit.description = description;
+        return exerciseToEdit;
+    }
+
+    public static boolean checkId(Connection connection, int id) throws SQLException {
+        for (Exercise exercise : loadAll(connection)) {
+            if (exercise.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ArrayList<Exercise> loadAll(Connection connection) throws SQLException {
+        ArrayList<Exercise> loadedExercise = new ArrayList<>();
+        PreparedStatement statement = connection.prepareStatement("SELECT* FROM exercise ORDER BY id ASC;");
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            loadedExercise.add(loadSingleExercise(resultSet));
+        }
+        return loadedExercise;
+    }
+
+    public static void printExercises(ArrayList<Exercise> exercises) {
+        if (exercises == null) {
+            System.out.println("List is empty.");
+            return;
+        }
+        System.out.println("List of exercises: ");
+        System.out.println("+--------+---------------+-------------------------+");
+        System.out.println(String.format("|%-8s|%-15s|%-25s|", "Id", "Title", "Description"));
+        System.out.println("+--------+---------------+-------------------------+");
+        for (Exercise exercise : exercises) {
+            System.out.println(exercise);
+        }
+        System.out.println("+--------+---------------+-------------------------+");
+    }
+
     private static Exercise loadSingleExercise(ResultSet resultSet) throws SQLException {
         Exercise loadedExercise = new Exercise();
         loadedExercise.id = resultSet.getInt("id");
@@ -37,26 +78,6 @@ public class Exercise {
         return null;
     }
 
-    public static ArrayList<Exercise> loadAll(Connection connection) throws SQLException {
-        ArrayList<Exercise> loadedExercise = new ArrayList<>();
-        PreparedStatement statement = connection.prepareStatement("SELECT* FROM exercise;");
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            loadedExercise.add(loadSingleExercise(resultSet));
-        }
-        return loadedExercise;
-    }
-
-    public static void printExercises(ArrayList<Exercise> exercises) {
-        if (exercises == null) {
-            System.out.println("List is empty.");
-            return;
-        }
-        for (Exercise exercise : exercises) {
-            System.out.println(exercise);
-        }
-    }
-
     public void saveToDB(Connection connection) throws SQLException {
         if (this.id == 0) {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO exercise (title, description) VALUES (?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
@@ -68,7 +89,7 @@ public class Exercise {
                 this.id = resultSet.getInt(1);
             }
         } else {
-            PreparedStatement statement = connection.prepareStatement("UPDATE exercise SET name=?, description=? WHERE id=?;");
+            PreparedStatement statement = connection.prepareStatement("UPDATE exercise SET title=?, description=? WHERE id=?;");
             statement.setString(1, this.title);
             statement.setString(2, this.description);
             statement.setInt(3, this.id);
@@ -89,8 +110,7 @@ public class Exercise {
 
     @Override
     public String toString() {
-        return "id:" + id +
-                "\ttitle:" + title +
-                "\tdescription:" + description;
+        return String.format("|%-8d|%-15s|%-25s|", id, (title.length() > 15) ? title.substring(0, 12) + "..." : title,
+                (description.length() > 25) ? description.substring(0, 22) + "..." : description);
     }
 }

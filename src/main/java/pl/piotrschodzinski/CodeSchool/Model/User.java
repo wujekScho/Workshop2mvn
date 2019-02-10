@@ -26,69 +26,8 @@ public class User {
         setPassword(password);
     }
 
-    private static User loadSingleUser(ResultSet resultSet) throws SQLException {
-        User loadedUser = new User();
-        loadedUser.id = resultSet.getLong("id");
-        loadedUser.username = resultSet.getString("username");
-        loadedUser.userGroupId = resultSet.getInt("user_group_id");
-        loadedUser.password = resultSet.getString("password");
-        loadedUser.email = resultSet.getString("email");
-        return loadedUser;
-    }
-
-    public static User loadById(Connection connection, long id) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("SELECT* FROM users WHERE id=?;");
-        statement.setLong(1, id);
-        ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            return loadSingleUser(resultSet);
-        }
-        return null;
-    }
-
-    public static ArrayList<User> loadAll(Connection connection) throws SQLException {
-        ArrayList<User> loadedUsers = new ArrayList<>();
-        PreparedStatement statement = connection.prepareStatement("SELECT* FROM users;");
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            loadedUsers.add(loadSingleUser(resultSet));
-        }
-        return loadedUsers;
-    }
-
-    public static boolean checkMail(Connection connection, String email) throws SQLException {
-        for (User user : loadAll(connection)) {
-            if (user.email.equalsIgnoreCase(email)) {
-                return false;
-            }
-        }
-        return Pattern.matches("^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$", email);
-    }
-
-    public static boolean checkId(Connection connection, long id) throws SQLException {
-        for (User user : loadAll(connection)) {
-            if (user.id == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static User editUser(Connection connection, long id, String username, String email, String password, int userGroupId) throws SQLException {
-        User userToEdit = loadById(connection, id);
-        userToEdit.username = username;
-        userToEdit.email = email;
-        userToEdit.password = getHashedPassword(password);
-        userToEdit.userGroupId = userGroupId;
-        return userToEdit;
-    }
-
     private void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    private static String getHashedPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
 
@@ -115,6 +54,15 @@ public class User {
         }
     }
 
+    public static User editUser(Connection connection, long id, String username, String email, String password, int userGroupId) throws SQLException {
+        User userToEdit = loadById(connection, id);
+        userToEdit.username = username;
+        userToEdit.email = email;
+        userToEdit.password = getHashedPassword(password);
+        userToEdit.userGroupId = userGroupId;
+        return userToEdit;
+    }
+
     public void delete(Connection connection) throws SQLException {
         if (this.id != 0) {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id=?");
@@ -124,6 +72,58 @@ public class User {
         } else {
             System.out.println("User doesn't exist.");
         }
+    }
+
+    private static String getHashedPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public static boolean checkId(Connection connection, long id) throws SQLException {
+        for (User user : loadAll(connection)) {
+            if (user.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkMail(Connection connection, String email) throws SQLException {
+        for (User user : loadAll(connection)) {
+            if (user.email.equalsIgnoreCase(email)) {
+                return false;
+            }
+        }
+        return Pattern.matches("^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$", email);
+    }
+
+    private static User loadSingleUser(ResultSet resultSet) throws SQLException {
+        User loadedUser = new User();
+        loadedUser.id = resultSet.getLong("id");
+        loadedUser.username = resultSet.getString("username");
+        loadedUser.userGroupId = resultSet.getInt("user_group_id");
+        loadedUser.password = resultSet.getString("password");
+        loadedUser.email = resultSet.getString("email");
+        return loadedUser;
+    }
+
+    public static User loadById(Connection connection, long id) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("SELECT* FROM users WHERE id=?;");
+        statement.setLong(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            return loadSingleUser(resultSet);
+        }
+        return null;
+    }
+
+    public static ArrayList<User> loadAll(Connection connection) throws SQLException {
+        ArrayList<User> loadedUsers = new ArrayList<>();
+        PreparedStatement statement = connection.prepareStatement("SELECT* FROM users ORDER BY id ASC;");
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            loadedUsers.add(loadSingleUser(resultSet));
+        }
+        return loadedUsers;
     }
 
     public static void printUsers(ArrayList<User> users) {
@@ -139,11 +139,12 @@ public class User {
             System.out.println(user);
         }
         System.out.println("+--------+---------------+-------------------------+----------+");
-
     }
 
     @Override
     public String toString() {
-        return String.format("|%-8d|%-15s|%-25s|%-10d|", id, username, email, userGroupId);
+        return String.format("|%-8d|%-15s|%-25s|%-10d|", id,
+                (username.length() > 15) ? username.substring(0, 12) + "..." : username,
+                (email.length() > 25) ? email.substring(0, 22) + "..." : email, userGroupId);
     }
 }

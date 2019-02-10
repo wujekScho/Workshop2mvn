@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-class UserAdministration {
+class UserManagement {
     static Scanner scanner = new Scanner(System.in);
 
     public static void menageUsers(Connection connection) throws SQLException {
@@ -17,31 +17,34 @@ class UserAdministration {
             switch (choice) {
                 case 1:
                     User.printUsers(User.loadAll(connection));
-                    choice = getInt("Type your choice: ");
+                    choice = getInt("Type your choice. \n" +
+                            "5 - print menu: ");
                     break;
                 case 2:
                     addUser(connection);
-                    choice = getInt("Type your choice: ");
+                    choice = getInt("Type your choice. \n" +
+                            "5 - print menu: ");
                     break;
                 case 3:
                     editUser(connection);
-                    choice = getInt("Type your choice: ");
+                    choice = getInt("Type your choice. \n" +
+                            "5 - print menu: ");
                     break;
                 case 4:
                     deleteUser(connection);
-                    choice = getInt("Type your choice: ");
+                    choice = getInt("Type your choice. \n" +
+                            "5 - to print menu: ");
                     break;
                 case 5:
                     printMenu();
                     choice = getInt("Type your choice. \n" +
-                            "5 - to print menu: ");
+                            "5 - print menu: ");
                     break;
                 case 0:
                     break;
                 default:
                     choice = getInt("Type valid number: ");
                     break;
-
             }
         }
         System.out.println("Program is being shut down...");
@@ -142,6 +145,4 @@ class UserAdministration {
         scanner.nextLine();
         return result;
     }
-
-
 }
