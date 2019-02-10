@@ -74,19 +74,23 @@ public class User {
         return false;
     }
 
-    public static ArrayList<Integer> loadUserIds(Connection connection) throws SQLException {
-        ArrayList<Integer> loadedIds = new ArrayList<>();
-        PreparedStatement statement = connection.prepareStatement("SELECT id FROM users");
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            loadedIds.add(resultSet.getInt("id"));
-        }
-        return loadedIds;
+    public static User editUser(Connection connection, long id, String username, String email, String password, int userGroupId) throws SQLException {
+        User userToEdit = loadById(connection, id);
+        userToEdit.username = username;
+        userToEdit.email = email;
+        userToEdit.password = getHashedPassword(password);
+        userToEdit.userGroupId = userGroupId;
+        return userToEdit;
     }
 
     private void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
+
+    private static String getHashedPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
 
     public void saveToDB(Connection connection) throws SQLException {
         if (this.id == 0) {
