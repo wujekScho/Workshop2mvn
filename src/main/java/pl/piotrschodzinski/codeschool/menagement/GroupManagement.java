@@ -1,12 +1,12 @@
-package pl.piotrschodzinski.CodeSchool;
+package pl.piotrschodzinski.codeschool.menagement;
 
-import pl.piotrschodzinski.CodeSchool.Model.UserGroup;
+import pl.piotrschodzinski.codeschool.model.Group;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.CodeSchool.UserManagement.getInt;
-import static pl.piotrschodzinski.CodeSchool.UserManagement.getString;
+import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
+import static pl.piotrschodzinski.codeschool.tools.Utilities.getString;
 
 public class GroupManagement {
     public static void menageUserGroups(Connection connection) throws SQLException {
@@ -15,7 +15,7 @@ public class GroupManagement {
         while (choice != 0) {
             switch (choice) {
                 case 1:
-                    UserGroup.printUserGroups(UserGroup.loadAll(connection));
+                    Group.printUserGroups(Group.loadAll(connection));
                     choice = getInt("Type your choice. \n" +
                             "5 - print menu: ");
                     break;
@@ -59,18 +59,18 @@ public class GroupManagement {
         System.out.println("0 - Enter main menu.");
     }
 
-    public static UserGroup addUserGroup(Connection connection) throws SQLException {
+    public static Group addUserGroup(Connection connection) throws SQLException {
         String name = getString("Type name: ");
-        UserGroup userGroup = new UserGroup(name);
-        userGroup.saveToDB(connection);
+        Group group = new Group(name);
+        group.saveToDB(connection);
         System.out.println("User group succesfully saved to DB.");
-        return userGroup;
+        return group;
     }
 
-    public static UserGroup editUserGroup(Connection connection) throws SQLException {
+    public static Group editUserGroup(Connection connection) throws SQLException {
         int id = getUserGroupId(connection, "Type group id to edit user group: ");
         String name = getString("Type new name: ");
-        UserGroup editedGroup = UserGroup.editUserGroup(connection, id, name);
+        Group editedGroup = Group.editUserGroup(connection, id, name);
         editedGroup.saveToDB(connection);
         System.out.println("User Group succesfully edited.");
         return editedGroup;
@@ -78,14 +78,14 @@ public class GroupManagement {
 
     public static void deleteUserGroup(Connection connection) throws SQLException {
         int id = getUserGroupId(connection, "Type group id to delete user group: ");
-        UserGroup groupToEdit = UserGroup.loadById(connection, id);
+        Group groupToEdit = Group.loadById(connection, id);
         groupToEdit.delete(connection);
         System.out.println("User group succesfully deleted");
     }
 
     public static int getUserGroupId(Connection connection, String prompt) throws SQLException {
         int id = getInt(prompt);
-        while (!UserGroup.checkGroupId(connection, id)) {
+        while (!Group.checkGroupId(connection, id)) {
             id = getInt("Group id desn't exist, type proper id: ");
         }
         return id;

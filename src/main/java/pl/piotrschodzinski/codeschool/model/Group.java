@@ -1,4 +1,4 @@
-package pl.piotrschodzinski.CodeSchool.Model;
+package pl.piotrschodzinski.codeschool.model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,25 +6,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class UserGroup {
+public class Group {
     private int id;
     private String name;
 
-    public UserGroup() {
+    public Group() {
     }
 
-    public UserGroup(String name) {
+    public Group(String name) {
         this.name = name;
     }
 
-    public static UserGroup editUserGroup(Connection connection, int id, String name) throws SQLException {
-        UserGroup userGroupToEdit = loadById(connection, id);
-        userGroupToEdit.name = name;
-        return userGroupToEdit;
+    public static Group editUserGroup(Connection connection, int id, String name) throws SQLException {
+        Group groupToEdit = loadById(connection, id);
+        groupToEdit.name = name;
+        return groupToEdit;
     }
 
     public static boolean checkGroupId(Connection connection, int id) throws SQLException {
-        for (UserGroup usergroup : loadAll(connection)) {
+        for (Group usergroup : loadAll(connection)) {
             if (usergroup.id == id) {
                 return true;
             }
@@ -32,8 +32,8 @@ public class UserGroup {
         return false;
     }
 
-    public static ArrayList<UserGroup> loadAll(Connection connection) throws SQLException {
-        ArrayList<UserGroup> loadedGroups = new ArrayList<>();
+    public static ArrayList<Group> loadAll(Connection connection) throws SQLException {
+        ArrayList<Group> loadedGroups = new ArrayList<>();
         PreparedStatement statement = connection.prepareStatement("SELECT* FROM user_group ORDER BY id ASC;");
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
@@ -42,8 +42,8 @@ public class UserGroup {
         return loadedGroups;
     }
 
-    public static void printUserGroups(ArrayList<UserGroup> userGroups) {
-        if (userGroups == null) {
+    public static void printUserGroups(ArrayList<Group> groups) {
+        if (groups == null) {
             System.out.println("List is empty.");
             return;
         }
@@ -51,20 +51,20 @@ public class UserGroup {
         System.out.println("+--------+---------------+");
         System.out.println(String.format("|%-8s|%-15s|", "Id", "Name"));
         System.out.println("+--------+---------------+");
-        for (UserGroup userGroup : userGroups) {
-            System.out.println(userGroup);
+        for (Group group : groups) {
+            System.out.println(group);
         }
         System.out.println("+--------+---------------+");
     }
 
-    private static UserGroup loadSingleGroup(ResultSet resultSet) throws SQLException {
-        UserGroup loadedGroup = new UserGroup();
+    private static Group loadSingleGroup(ResultSet resultSet) throws SQLException {
+        Group loadedGroup = new Group();
         loadedGroup.id = resultSet.getInt("id");
         loadedGroup.name = resultSet.getString("name");
         return loadedGroup;
     }
 
-    public static UserGroup loadById(Connection connection, int id) throws SQLException {
+    public static Group loadById(Connection connection, int id) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("SELECT* FROM user_group WHERE id=?;");
         statement.setLong(1, id);
         ResultSet resultSet = statement.executeQuery();

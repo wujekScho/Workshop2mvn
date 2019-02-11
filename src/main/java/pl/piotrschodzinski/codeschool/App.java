@@ -1,9 +1,12 @@
-package pl.piotrschodzinski.CodeSchool;
+package pl.piotrschodzinski.codeschool;
+
+import pl.piotrschodzinski.codeschool.menagement.*;
+import pl.piotrschodzinski.codeschool.tools.ConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.CodeSchool.UserManagement.getInt;
+import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
 
 public class App {
     public static void main(String[] args) {
@@ -33,7 +36,7 @@ public class App {
                         choice = getInt("Type your choice.");
                         break;
                     case 5:
-                        UserInterface.userProgram(connection, args);
+                        UserPanel.userProgram(connection, args);
                         printMenu();
                         choice = getInt("Type your choice.");
                         break;
@@ -57,7 +60,7 @@ public class App {
         System.out.println("2 - Menage user groups.");
         System.out.println("3 - Menage exercises.");
         System.out.println("4 - Menage solutions.");
-        System.out.println("5 - Enter user interface.");
+        System.out.println("5 - Enter user panel.");
         System.out.println("0 - Exit program.");
     }
 }

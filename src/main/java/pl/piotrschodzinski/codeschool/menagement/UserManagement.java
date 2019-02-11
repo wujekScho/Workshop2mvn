@@ -1,13 +1,15 @@
-package pl.piotrschodzinski.CodeSchool;
+package pl.piotrschodzinski.codeschool.menagement;
 
-import pl.piotrschodzinski.CodeSchool.Model.User;
-import pl.piotrschodzinski.CodeSchool.Model.UserGroup;
+import pl.piotrschodzinski.codeschool.model.Group;
+import pl.piotrschodzinski.codeschool.model.User;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-class UserManagement {
+import static pl.piotrschodzinski.codeschool.tools.Utilities.*;
+
+public class UserManagement {
     static Scanner scanner = new Scanner(System.in);
 
     public static void menageUsers(Connection connection) throws SQLException {
@@ -103,18 +105,13 @@ class UserManagement {
 
     public static int getUserGroupId(Connection connection, String prompt) throws SQLException {
         int userGroupId = getInt(prompt);
-        while (!UserGroup.checkGroupId(connection, userGroupId)) {
+        while (!Group.checkGroupId(connection, userGroupId)) {
             userGroupId = getInt("Group dont exist, type proper one: ");
         }
 
         return userGroupId;
     }
 
-    public static String getString(String prompt) {
-        System.out.print(prompt);
-        String username = scanner.nextLine();
-        return username;
-    }
 
     public static long getUserId(Connection connection, String prompt) throws SQLException {
         long id = getLong(prompt);
@@ -122,27 +119,5 @@ class UserManagement {
             id = getLong("User id desn't exist, type proper id: ");
         }
         return id;
-    }
-
-    public static int getInt(String prompt) {
-        System.out.println(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.print("Type valid integer value: ");
-            scanner.next();
-        }
-        int result = scanner.nextInt();
-        scanner.nextLine();
-        return result;
-    }
-
-    public static long getLong(String prompt) {
-        System.out.println(prompt);
-        while (!scanner.hasNextLong()) {
-            System.out.print("Type valid integer value: ");
-            scanner.next();
-        }
-        long result = scanner.nextLong();
-        scanner.nextLine();
-        return result;
     }
 }

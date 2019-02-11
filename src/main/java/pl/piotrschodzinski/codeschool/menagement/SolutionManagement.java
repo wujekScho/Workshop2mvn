@@ -1,13 +1,13 @@
-package pl.piotrschodzinski.CodeSchool;
+package pl.piotrschodzinski.codeschool.menagement;
 
-import pl.piotrschodzinski.CodeSchool.Model.Exercise;
-import pl.piotrschodzinski.CodeSchool.Model.Solution;
-import pl.piotrschodzinski.CodeSchool.Model.User;
+import pl.piotrschodzinski.codeschool.model.Exercise;
+import pl.piotrschodzinski.codeschool.model.Solution;
+import pl.piotrschodzinski.codeschool.model.User;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.CodeSchool.UserManagement.getInt;
+import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
 
 public class SolutionManagement {
     public static void menageSolutions(Connection connection) throws SQLException {

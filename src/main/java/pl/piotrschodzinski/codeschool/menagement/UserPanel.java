@@ -1,14 +1,16 @@
-package pl.piotrschodzinski.CodeSchool;
+package pl.piotrschodzinski.codeschool.menagement;
 
-import pl.piotrschodzinski.CodeSchool.Model.Solution;
-import pl.piotrschodzinski.CodeSchool.Model.User;
+import pl.piotrschodzinski.codeschool.model.Solution;
+import pl.piotrschodzinski.codeschool.model.User;
+import pl.piotrschodzinski.codeschool.tools.Utilities;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.CodeSchool.UserManagement.getInt;
+import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
 
-public class UserInterface {
+
+public class UserPanel {
     public static void userProgram(Connection connection, String[] userIds) throws SQLException {
         if (userIds == null || userIds.length < 1 || !tryParse(userIds[0]) || !User.checkId(connection, Long.valueOf(userIds[0]))) {
             System.out.println("Wrong input argument.");
@@ -46,7 +48,7 @@ public class UserInterface {
 
     public static void addSolution(Connection connection, long userId) throws SQLException {
         int solutionId = getSolutionId(connection, userId);
-        String solution = UserManagement.getString("Type your solution.");
+        String solution = Utilities.getString("Type your solution.");
         Solution editedSolution = Solution.editSolution(connection, solutionId, solution);
         editedSolution.saveToDB(connection);
         System.out.println("Solution added succesfully.");

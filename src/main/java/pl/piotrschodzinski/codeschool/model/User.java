@@ -1,4 +1,4 @@
-package pl.piotrschodzinski.CodeSchool.Model;
+package pl.piotrschodzinski.codeschool.model;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -26,34 +26,6 @@ public class User {
         setPassword(password);
     }
 
-    private void setPassword(String password) {
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-
-    public void saveToDB(Connection connection) throws SQLException {
-        if (this.id == 0) {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO users (username,email,password,user_group_id) VALUES (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            statement.setString(1, this.username);
-            statement.setString(2, this.email);
-            statement.setString(3, this.password);
-            statement.setInt(4, this.userGroupId);
-            statement.executeUpdate();
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                this.id = resultSet.getInt(1);
-            }
-        } else {
-            PreparedStatement statement = connection.prepareStatement("UPDATE users SET username=?,email=?,password=?,user_group_id=? WHERE id=?;");
-            statement.setString(1, this.username);
-            statement.setString(2, this.email);
-            statement.setString(3, this.password);
-            statement.setInt(4, this.userGroupId);
-            statement.setLong(5, this.id);
-            statement.executeUpdate();
-        }
-    }
-
     public static User editUser(Connection connection, long id, String username, String email, String password, int userGroupId) throws SQLException {
         User userToEdit = loadById(connection, id);
         userToEdit.username = username;
@@ -61,17 +33,6 @@ public class User {
         userToEdit.password = getHashedPassword(password);
         userToEdit.userGroupId = userGroupId;
         return userToEdit;
-    }
-
-    public void delete(Connection connection) throws SQLException {
-        if (this.id != 0) {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id=?");
-            statement.setLong(1, this.id);
-            statement.executeUpdate();
-            this.id = 0;
-        } else {
-            System.out.println("User doesn't exist.");
-        }
     }
 
     private static String getHashedPassword(String password) {
@@ -139,6 +100,44 @@ public class User {
             System.out.println(user);
         }
         System.out.println("+--------+---------------+-------------------------+----------+");
+    }
+
+    private void setPassword(String password) {
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public void saveToDB(Connection connection) throws SQLException {
+        if (this.id == 0) {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO users (username,email,password,user_group_id) VALUES (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setString(1, this.username);
+            statement.setString(2, this.email);
+            statement.setString(3, this.password);
+            statement.setInt(4, this.userGroupId);
+            statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                this.id = resultSet.getInt(1);
+            }
+        } else {
+            PreparedStatement statement = connection.prepareStatement("UPDATE users SET username=?,email=?,password=?,user_group_id=? WHERE id=?;");
+            statement.setString(1, this.username);
+            statement.setString(2, this.email);
+            statement.setString(3, this.password);
+            statement.setInt(4, this.userGroupId);
+            statement.setLong(5, this.id);
+            statement.executeUpdate();
+        }
+    }
+
+    public void delete(Connection connection) throws SQLException {
+        if (this.id != 0) {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id=?");
+            statement.setLong(1, this.id);
+            statement.executeUpdate();
+            this.id = 0;
+        } else {
+            System.out.println("User doesn't exist.");
+        }
     }
 
     @Override

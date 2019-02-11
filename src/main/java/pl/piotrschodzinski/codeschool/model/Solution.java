@@ -1,4 +1,4 @@
-package pl.piotrschodzinski.CodeSchool.Model;
+package pl.piotrschodzinski.codeschool.model;
 
 import java.sql.*;
 import java.time.LocalDateTime;
