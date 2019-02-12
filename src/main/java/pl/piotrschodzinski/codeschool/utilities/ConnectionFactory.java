@@ -1,4 +1,4 @@
-package pl.piotrschodzinski.codeschool.tools;
+package pl.piotrschodzinski.codeschool.utilities;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

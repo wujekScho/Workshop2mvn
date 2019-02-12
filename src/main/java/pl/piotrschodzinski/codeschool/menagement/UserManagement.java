@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import static pl.piotrschodzinski.codeschool.tools.Utilities.*;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.*;
 
 public class UserManagement {
     static Scanner scanner = new Scanner(System.in);

@@ -7,7 +7,7 @@ import pl.piotrschodzinski.codeschool.model.User;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.getInt;
 
 public class SolutionManagement {
     public static void menageSolutions(Connection connection) throws SQLException {

@@ -1,12 +1,12 @@
 package pl.piotrschodzinski.codeschool;
 
 import pl.piotrschodzinski.codeschool.menagement.*;
-import pl.piotrschodzinski.codeschool.tools.ConnectionFactory;
+import pl.piotrschodzinski.codeschool.utilities.ConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.getInt;
 
 public class App {
     public static void main(String[] args) {

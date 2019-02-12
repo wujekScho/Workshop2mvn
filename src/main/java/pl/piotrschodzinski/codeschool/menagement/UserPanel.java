@@ -2,12 +2,12 @@ package pl.piotrschodzinski.codeschool.menagement;
 
 import pl.piotrschodzinski.codeschool.model.Solution;
 import pl.piotrschodzinski.codeschool.model.User;
-import pl.piotrschodzinski.codeschool.tools.Utilities;
+import pl.piotrschodzinski.codeschool.utilities.Tools;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.getInt;
 
 
 public class UserPanel {
@@ -48,7 +48,7 @@ public class UserPanel {
 
     public static void addSolution(Connection connection, long userId) throws SQLException {
         int solutionId = getSolutionId(connection, userId);
-        String solution = Utilities.getString("Type your solution.");
+        String solution = Tools.getString("Type your solution.");
         Solution editedSolution = Solution.editSolution(connection, solutionId, solution);
         editedSolution.saveToDB(connection);
         System.out.println("Solution added succesfully.");

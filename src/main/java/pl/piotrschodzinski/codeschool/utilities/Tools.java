@@ -1,8 +1,8 @@
-package pl.piotrschodzinski.codeschool.tools;
+package pl.piotrschodzinski.codeschool.utilities;
 
 import java.util.Scanner;
 
-public class Utilities {
+public class Tools {
     static Scanner scanner = new Scanner(System.in);
 
     public static String getString(String prompt) {

@@ -5,8 +5,8 @@ import pl.piotrschodzinski.codeschool.model.Exercise;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static pl.piotrschodzinski.codeschool.tools.Utilities.getInt;
-import static pl.piotrschodzinski.codeschool.tools.Utilities.getString;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.getInt;
+import static pl.piotrschodzinski.codeschool.utilities.Tools.getString;
 
 public class ExerciseManagement {
     public static void menageExercises(Connection connection) throws SQLException {
